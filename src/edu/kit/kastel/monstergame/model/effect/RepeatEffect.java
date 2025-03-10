@@ -21,6 +21,9 @@ public class RepeatEffect extends Effect {
     private boolean randomCount; // Whether this is a random count
     private List<Effect> effects;
 
+    // Add field to store resolved random count
+    private int resolvedCount = -1;
+
     /**
      * Creates a new repeat effect with a fixed repetition count.
      * @param count The number of times to repeat the effects
@@ -46,14 +49,28 @@ public class RepeatEffect extends Effect {
         this.effects = new ArrayList<>(effects);
         this.randomCount = true;
     }
+
     /**
      * Gets the fixed repetition count.
      * Only valid if this is not a random count effect.
-     * @return The fixed repetition count
+     * If this is a random count effect with a resolved count, returns that.
+     * @return The repetition count
      */
     public int getCount() {
+        if (randomCount && resolvedCount != -1) {
+            return resolvedCount;
+        }
         return count;
     }
+
+    /**
+     * Sets the resolved random count.
+     * @param count The resolved count to set
+     */
+    public void setResolvedCount(int count) {
+        this.resolvedCount = count;
+    }
+
     /**
      * Gets the minimum repetition count for random repetitions.
      * Only used if this is a random count effect.
@@ -62,6 +79,7 @@ public class RepeatEffect extends Effect {
     public int getMinCount() {
         return minCount;
     }
+
     /**
      * Gets the maximum repetition count for random repetitions.
      * Only used if this is a random count effect.
@@ -70,6 +88,7 @@ public class RepeatEffect extends Effect {
     public int getMaxCount() {
         return maxCount;
     }
+
     /**
      * Checks if this effect uses a random repetition count.
      * @return true if the repetition count is random, false if its fixed
@@ -77,6 +96,15 @@ public class RepeatEffect extends Effect {
     public boolean isRandomCount() {
         return randomCount;
     }
+
+    /**
+     * Checks if the random count has been resolved.
+     * @return true if the random count has been resolved, false otherwise
+     */
+    public boolean hasResolvedCount() {
+        return resolvedCount != -1;
+    }
+
     /**
      * Gets a copy of the effects that will be repeated.
      * @return The list of effects to repeat
@@ -84,6 +112,7 @@ public class RepeatEffect extends Effect {
     public List<Effect> getEffects() {
         return new ArrayList<>(effects);
     }
+
     /**
      * Returns a string of the repeat effect.
      * @return A string containing the effect type, repetition count, and contained effects
@@ -99,8 +128,13 @@ public class RepeatEffect extends Effect {
         }
 
         if (randomCount) {
-            return String.format("%s(count=%d-%d, effects=[%s])",
-                    effectType.getValue(), minCount, maxCount, effectsStr.toString());
+            if (resolvedCount != -1) {
+                return String.format("%s(count=%d, effects=[%s])",
+                        effectType.getValue(), resolvedCount, effectsStr.toString());
+            } else {
+                return String.format("%s(count=%d-%d, effects=[%s])",
+                        effectType.getValue(), minCount, maxCount, effectsStr.toString());
+            }
         } else {
             return String.format("%s(count=%d, effects=[%s])",
                     effectType.getValue(), count, effectsStr.toString());

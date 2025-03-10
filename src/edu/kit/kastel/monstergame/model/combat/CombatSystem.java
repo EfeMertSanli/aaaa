@@ -111,15 +111,14 @@ public class CombatSystem {
     public Monster checkForWinner() {
         List<Monster> activeFighters = getActiveFighters();
 
-        if (activeFighters.size() < 2) {
-            if (activeFighters.size() == 1) {
-                return activeFighters.get(0);
-            } else {
-                return null;
-            }
+        if (activeFighters.size() == 0) {
+            // This is a draw
+            return null;
+        } else if (activeFighters.size() == 1) {
+            return activeFighters.get(0);
+        } else {
+            return null;
         }
-
-        return null;
     }
 
     /**
@@ -192,7 +191,7 @@ public class CombatSystem {
         } else if (condition == StatusCondition.WET) {
             System.out.println(monster.getName() + " is soaked!");
         } else if (condition == StatusCondition.QUICKSAND) {
-            System.out.println(monster.getName() + " is stuck in quicksand!");
+            System.out.println(monster.getName() + " is caught in quicksand!");
         } else if (condition == StatusCondition.SLEEP) {
             System.out.println(monster.getName() + " is sleeping and cannot move!");
         }
@@ -236,6 +235,19 @@ public class CombatSystem {
      * Execute a monsters action.
      */
     private void executeMonsterAction(Monster attacker, Action action) {
+
+        if (inDebugMode) {
+            for (Effect effect : action.getEffects()) {
+                if (effect.getEffectType() == EffectType.REPEAT) {
+                    RepeatEffect repeatEffect = (RepeatEffect) effect;
+                    if (repeatEffect.isRandomCount()) {
+                        int minCount = repeatEffect.getMinCount();
+                        int maxCount = repeatEffect.getMaxCount();
+                        RandomUtil.getInstance().getRandomInt(minCount, maxCount, "repeat count");
+                    }
+                }
+            }
+        }
         System.out.println(attacker.getName() + " uses " + action.getName() + "!");
 
         // Execute the action
@@ -281,7 +293,6 @@ public class CombatSystem {
      */
     public void endOfRoundPhase() {
         List<Monster> sortedMonsters = new ArrayList<>(monsters);
-
         Collections.sort(sortedMonsters, new Comparator<Monster>() {
             @Override
             public int compare(Monster m1, Monster m2) {
@@ -293,24 +304,26 @@ public class CombatSystem {
             if (!monster.isDefeated()) {
                 Map<ProtectionTarget, Integer> protection = monster.getProtection();
 
+                // Process each protection type
                 for (ProtectionTarget target : protection.keySet()) {
                     int rounds = protection.get(target);
                     if (rounds > 0) {
+                        // Decrement the protection duration
                         protection.put(target, rounds - 1);
+
+                        // Announce when protection has ended
                         if (protection.get(target) == 0) {
-                            System.out.println(monster.getName() + "'s "
-                                    + (target == ProtectionTarget.HEALTH ? "damage" : "stat reduction")
-                                    + " protection has ended.");
+                            System.out.println("\n" + monster.getName()
+                                    + "'s stat reduction protection has ended.");
                         }
                     }
                 }
-
                 statusHandler.evaluateStatusCondition(monster);
             }
         }
         for (Monster monster : monsters) {
             monster.setSelectedAction(null);
-            monster.setHasPassed(false); // Reset the pass status
+            monster.setHasPassed(false);
         }
     }
 

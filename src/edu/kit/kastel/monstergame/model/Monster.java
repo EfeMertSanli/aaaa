@@ -26,7 +26,7 @@ public class Monster {
     private int contestantNumber; // Wettstreiter-Nummer
     private Action selectedAction; // For storing the selected action during combat
     private boolean hasPassed;
-
+    private String targetName;
     /**
      * Creates a new Monster with the specified attributes.
      *
@@ -61,7 +61,20 @@ public class Monster {
         }
     }
 
-
+    /**
+     * Sets the target name for the monster's action.
+     * @param targetName The name of the target monster
+     */
+    public void setTargetName(String targetName) {
+        this.targetName = targetName;
+    }
+    /**
+     * Gets the target name for the monster's action.
+     * @return The name of the target monster
+     */
+    public String getTargetName() {
+        return targetName;
+    }
     /**
      * Calculate the effective value for a stat based on its base value and stage modifier.
      * @param statType The type of stat to calculate
@@ -231,7 +244,7 @@ public class Monster {
      * @return A map containing the protection durations
      */
     public Map<ProtectionTarget, Integer> getProtection() {
-        return new EnumMap<>(protection);
+        return protection;
     }
 
     /**

@@ -84,7 +84,7 @@ public class CommandHandler {
         }
         switch (command) {
             case "quit":
-                configHandler.quit();
+                configHandler.quit(parts);
                 break;
             case "load":
                 if (parts.length < 2) {
@@ -121,11 +121,8 @@ public class CommandHandler {
                 }
                 break;
             case "pass":
-                if (!inCompetition || currentMonster == null) {
-                    System.out.println("Error, pass command only available during competition in Phase I");
-                } else {
-                    actionHandler.pass();
-                }
+                String[] passArgs = parts;  // Pass the whole parts array
+                actionHandler.pass(passArgs);
                 break;
             default:
                 System.out.println("Error, unknown command: " + command);
@@ -143,25 +140,27 @@ public class CommandHandler {
             if (inCompetition) {
                 displayHandler.showCompetitionMonsters();
             } else {
-                System.out.println("Error, show command requires additional parameters"
-                        + " (monsters, actions, stats)");
+                System.out.println("Error, show command requires additional parameters (monsters, actions, stats)");
             }
-        } else if (parts[1].equalsIgnoreCase("monsters")) {
+        } else if (parts.length == 2 && parts[1].equalsIgnoreCase("monsters")) {
+            // Changed this condition to check that parts.length is exactly 2
             displayHandler.showAllMonsters();
-        } else if (parts[1].equalsIgnoreCase("actions")) {
+        } else if (parts.length == 2 && parts[1].equalsIgnoreCase("actions")) {
             if (inCompetition && currentMonster != null) {
                 displayHandler.showActions();
             } else {
                 System.out.println("Error, can only show actions during competition in Phase I");
             }
-        } else if (parts[1].equalsIgnoreCase("stats")) {
+        } else if (parts.length == 2 && parts[1].equalsIgnoreCase("stats")) {
             if (inCompetition && currentMonster != null) {
                 displayHandler.showStats();
             } else {
                 System.out.println("Error, can only show stats during competition in Phase I");
             }
         } else {
-            System.out.println("Error, unknown show command: " + parts[1]);
+            System.out.println("Error, unknown show command: "
+                    + (parts.length > 1 ? parts[1] : "")
+                    + (parts.length > 2 ? " with additional parameters" : ""));
         }
     }
 

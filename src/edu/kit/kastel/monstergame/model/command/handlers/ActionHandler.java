@@ -11,7 +11,7 @@ import edu.kit.kastel.monstergame.model.command.CommandHandler;
 public class ActionHandler {
     private final CommandHandler commandHandler;
     private boolean waitingForDebugInput;
-
+    private String targetName;
     /**
      * Creates a new ActionHandler.
      * @param commandHandler The main command handler
@@ -46,14 +46,25 @@ public class ActionHandler {
             return;
         }
 
+        // Store the target name
+        this.targetName = targetName;
+
         currentMonster.setSelectedAction(selectedAction);
+        // Store the target information in the monster
+        currentMonster.setTargetName(targetName);
+
         commandHandler.getCompetitionHandler().nextMonsterOrPhase();
     }
 
     /**
      * Makes the current monster pass its turn.
+     * @param parts parts check
      */
-    public void pass() {
+    public void pass(String[] parts) {
+        if (parts.length > 1) {
+            System.out.println("Error, pass command does not accept arguments");
+            return;
+        }
         Monster currentMonster = commandHandler.getCurrentMonster();
         if (currentMonster == null) {
             System.out.println("Error, pass command only available during competition in Phase I");

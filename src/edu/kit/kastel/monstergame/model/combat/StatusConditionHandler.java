@@ -51,7 +51,7 @@ public class StatusConditionHandler {
     public boolean evaluateStatusCondition(Monster monster) {
         StatusCondition condition = monster.getStatusCondition();
         if (condition != null) {
-            // 1/3 chance to end the status condition - use status-specific random generator
+            // 1/3 chance to end the status condition
             boolean conditionEnds = RandomUtil.getInstance().rollStatusChance(33.33,
                     "status condition end for " + monster.getName());
 

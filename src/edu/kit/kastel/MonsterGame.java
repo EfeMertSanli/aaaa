@@ -26,7 +26,10 @@ public final class MonsterGame {
             System.out.println("Error, Wrong Command Line arguments.");
             return;
         }
-
+        if (args.length > 2) {
+            System.out.println("Error, Too many Command line arguments.");
+            return;
+        }
         String configFilePath = args[0];
         boolean debugMode = false;
         long seed = 0; // Default seed

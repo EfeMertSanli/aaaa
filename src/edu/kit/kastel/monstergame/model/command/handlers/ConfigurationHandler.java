@@ -22,10 +22,17 @@ public class ConfigurationHandler {
         this.commandHandler = commandHandler;
     }
 
+
     /**
      * Handles the quit command.
+     * @param args Command arguments after "quit"
      */
-    public void quit() {
+    public void quit(String[] args) {
+        if (args.length > 1) {
+            System.out.println("Error, quit command does not accept additional arguments");
+            return;
+        }
+
         commandHandler.setRunning(false);
         System.out.println("Exiting game...");
     }

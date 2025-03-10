@@ -55,6 +55,23 @@ public class ActionExecutor {
         firstDamageCalculation = currentActionHasDamage;
         Queue<Effect> effectQueue = new LinkedList<>();
         processActionEffects(action, effectQueue);
+
+        // Check if the target monster is still alive
+        String targetName = attacker.getTargetName();
+        if (targetName != null && !targetName.isEmpty()) {
+            boolean targetExists = false;
+            for (Monster monster : monsters) {
+                if (monster.getName().equals(targetName) && !monster.isDefeated()) {
+                    targetExists = true;
+                    break;
+                }
+            }
+            if (!targetExists) {
+                return false;
+            }
+        }
+
+        // Check for any valid target
         boolean hasValidTargets = true;
         for (Effect effect : action.getEffects()) {
             if (effect.getTarget() == EffectTarget.TARGET) {
@@ -71,10 +88,12 @@ public class ActionExecutor {
                 }
             }
         }
+
         if (!hasValidTargets) {
             // Let combat system handle the failure message
             return false;
         }
+
         return executeEffects(attacker, effectQueue, monsters);
     }
 
@@ -141,11 +160,9 @@ public class ActionExecutor {
 
         while (!effectQueue.isEmpty()) {
             Effect effect = effectQueue.poll();
-
             // If this is a continue effect, just check if it hits and continue if it does
             if (effect.getEffectType() == EffectType.CONTINUE) {
                 boolean hits = calculateHit(attacker, attacker, effect);
-
                 if (!hits && firstEffect) {
                     // Let the combat system handle the failure message
                     return false;
@@ -209,14 +226,27 @@ public class ActionExecutor {
         if (effect.getTarget() == EffectTarget.SELF) {
             return attacker;
         } else {
-            // Find the first  alive enemy
+            String targetName = attacker.getTargetName();
+
+            // If a specific target name
+            if (targetName != null && !targetName.isEmpty()) {
+                for (Monster monster : monsters) {
+                    if (monster.getName().equals(targetName) && !monster.isDefeated()) {
+                        return monster;
+                    }
+                }
+                // Target specified but not found or already defeated
+                return null;
+            }
+
+            // No specific target or target not found, find the first alive enemy
             for (Monster monster : monsters) {
                 if (monster != attacker && !monster.isDefeated()) {
                     return monster;
                 }
             }
         }
-        return null;  // No valid target found
+        return null;
     }
 
     /**
@@ -243,7 +273,6 @@ public class ActionExecutor {
             double targetAgl = target.getEffectiveStat(StatType.AGL);
             hitChance = baseHitRate * (attackerPrc / targetAgl);
         }
-
 
         // Use RandomUtil to determine if attack hits
         return RandomUtil.getInstance().rollChance(hitChance, "hit calculation for " + effect.getEffectType());

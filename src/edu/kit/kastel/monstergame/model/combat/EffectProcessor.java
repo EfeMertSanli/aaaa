@@ -5,6 +5,7 @@ import edu.kit.kastel.monstergame.model.effect.HealingEffect;
 import edu.kit.kastel.monstergame.model.Monster;
 import edu.kit.kastel.monstergame.model.effect.DamageEffect;
 import edu.kit.kastel.monstergame.model.effect.Effect;
+import edu.kit.kastel.monstergame.model.enums.DamageType;
 import edu.kit.kastel.monstergame.model.enums.StatType;
 import edu.kit.kastel.monstergame.model.effect.StatChangeEffect;
 import edu.kit.kastel.monstergame.model.enums.ProtectionTarget;
@@ -248,16 +249,15 @@ public class EffectProcessor {
                 healAmount = (int) Math.ceil(maxHp * percentage);
                 break;
             case BASE:
-                double attackerAtk = attacker.getEffectiveStat(StatType.ATK);
-                double effectivePower = effect.getPower();
-                double sameElementFactor = 1.0;
-                if (attacker.getElement() == attacker.getSelectedAction().getElement()) {
-                    sameElementFactor = 1.5;
-                }
-                double randomFactor = RandomUtil.getInstance().getRandomDouble(0.85, 1.0, "healing random factor");
-                double normalizationFactor = 1.0 / 3.0;
-                healAmount = (int) Math.ceil(effectivePower * (attackerAtk / 100.0)
-                        * sameElementFactor * randomFactor * normalizationFactor);
+                // Use the same calculation logic as damage
+                DamageEffect tempEffect = new DamageEffect(
+                        effect.getTarget(),
+                        DamageType.BASE,
+                        effect.getPower(),
+                        effect.getHitRate()
+                );
+                // Calls damage calculator but interprets the result as healing
+                healAmount = damageCalculator.calculateBaseDamage(attacker, target, tempEffect, false);
                 break;
             default: break;
         }

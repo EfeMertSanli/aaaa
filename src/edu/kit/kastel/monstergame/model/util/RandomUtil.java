@@ -68,12 +68,12 @@ public final class RandomUtil {
      */
     public boolean rollChance(double probability, String decisionDescription) {
         if (inDebugMode) {
-            System.out.printf("Decide %s: yes or no (y/n)?%n ", decisionDescription);
+            System.out.printf("Decide %s: yes or no? (y/n)%n", decisionDescription);
             String input = scanner.nextLine().trim().toLowerCase();
             while (!input.equals("y") && !input.equals("n")
                     && !input.equals("yes") && !input.equals("no")) {
                 System.out.println("Error, enter y or n.");
-                System.out.printf("Decide %s: yes or no (y/n)?%n ", decisionDescription);
+                System.out.printf("Decide %s: yes or no? (y/n)%n", decisionDescription);
                 input = scanner.nextLine().trim().toLowerCase();
             }
             return input.equals("y") || input.equals("yes");
@@ -93,12 +93,12 @@ public final class RandomUtil {
      */
     public boolean rollStatusChance(double probability, String decisionDescription) {
         if (inDebugMode) {
-            System.out.printf("Decide %s: yes or no (y/n)?%n ", decisionDescription);
+            System.out.printf("Decide %s: yes or no? (y/n)%n", decisionDescription);
             String input = scanner.nextLine().trim().toLowerCase();
             while (!input.equals("y") && !input.equals("n")
                     && !input.equals("yes") && !input.equals("no")) {
                 System.out.println("Error, enter y or n.");
-                System.out.printf("Decide %s: yes or no (y/n)?%n ", decisionDescription);
+                System.out.printf("Decide %s: yes or no? (y/n)%n", decisionDescription);
                 input = scanner.nextLine().trim().toLowerCase();
             }
             return input.equals("y") || input.equals("yes");
@@ -118,11 +118,11 @@ public final class RandomUtil {
      */
     public double getRandomDouble(double min, double max, String decisionDescription) {
         if (inDebugMode) {
-            System.out.printf("Decide %s: a double between %.2f and %.2f?%n ",
+            System.out.printf("Decide %s: a number between %.2f and %.2f?%n",
                     decisionDescription, min, max);
             try {
                 double value = Double.parseDouble(scanner.nextLine().trim());
-                if (value < min || value >= max) {
+                if (value < min || value > max) {
                     System.out.println("Error, out of range.");
                     return getRandomDouble(min, max, decisionDescription);
                 }
@@ -145,7 +145,7 @@ public final class RandomUtil {
      */
     public int getRandomInt(int min, int max, String decisionDescription) {
         if (inDebugMode) {
-            System.out.printf("Decide %s: an integer between %d and %d?%n ",
+            System.out.printf("Decide %s: an integer between %d and %d?%n",
                     decisionDescription, min, max);
             try {
                 int value = Integer.parseInt(scanner.nextLine().trim());

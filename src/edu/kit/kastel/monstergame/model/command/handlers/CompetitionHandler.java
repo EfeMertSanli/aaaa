@@ -152,11 +152,18 @@ public class CompetitionHandler {
         combatSystem.executeActionsPhase();
 
         // Check if the competition is over
-        Monster winner = combatSystem.checkForWinner();
-        if (winner != null) {
-            handleCompetitionEnd(winner);
+        List<Monster> activeFighters = combatSystem.getActiveFighters();
+
+        if (activeFighters.isEmpty()) {
+            // All monsters are defeated, draw
+            System.out.println("\nAll monsters have fainted. The competition ends without a winner!");
+            commandHandler.setInCompetition(false);
+            commandHandler.setCurrentMonster(null);
+        } else if (activeFighters.size() == 1) {
+            // One monster remaining
+            handleCompetitionEnd(activeFighters.get(0));
         } else {
-            // Start a new round
+            // Multiple monsters still active
             combatSystem.endOfRoundPhase();
             startPhaseI();
         }
@@ -170,7 +177,7 @@ public class CompetitionHandler {
         if (winner != null) {
             System.out.println("\n" + winner.getName() + " has no opponents left and wins the competition!");
         } else {
-            System.out.println("The contest ended in a draw!");
+            System.out.println("\nThe contest ended in a draw!");
         }
 
         commandHandler.setInCompetition(false);
