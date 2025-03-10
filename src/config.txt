@@ -1,0 +1,49 @@
+action TidalSlam WATER
+    damage target base 70 90
+end action
+
+action StickyTongue NORMAL
+    inflictStatChange target SPD -1 85
+end action
+
+action CroakCall NORMAL
+    protectStat stats random 1 3 100
+end action
+
+action PondLeap WATER
+    damage target base 50 95
+end action
+
+action BlazingShell FIRE
+    damage target base 40 100
+end action
+
+action LavaDrip FIRE
+    damage target base 30 80
+end action
+
+action MagmaTrail FIRE
+    inflictStatusCondition target BURN 90
+end action
+
+action InfernoBurst FIRE
+    damage target base 100 75
+end action
+
+action Snap NORMAL
+    damage target abs 5 95
+end action
+
+action Devour EARTH
+    damage target base 10 80
+    heal user abs 15 100
+end action
+
+action Howl NORMAL
+    inflictStatChange target PRC -1 85
+end action
+
+monster BullFrog WATER 112 78 66 32 TidalSlam StickyTongue CroakCall PondLeap
+monster FireSnail FIRE 238 54 92 23 BlazingShell LavaDrip MagmaTrail InfernoBurst
+monster VenusFlytrap EARTH 294 81 74 41 Snap Devour
+monster Dog NORMAL 76 72 58 65 Snap Howl
